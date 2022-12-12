@@ -190,75 +190,82 @@ public class NaiiveBayes3 {
 	}
 
 	private ResultPair computeResults() {
-		double TP = 0, FP = 0, FN = 0;
+		double TP[] = new double[feat.size() + 1];
+		double FP[] = new double[feat.size() + 1];
+		double FN[] = new double[feat.size() + 1];
+		double F1[] = new double[feat.size() + 1];
+		System.out.println(feat.size());
 		for (Integer circleId : answerCircles.keySet()) {
 			for (Integer id : answerCircles.get(circleId).getCircleMembers()) {
 				if (circles.get(circleId).getCircleMembers().contains(id))
-					TP++;
+					TP[id]++;
 				else
-					FP++;
+					FP[id]++;
 			}
 		}
 		for (Integer circleId : circles.keySet()) {
 			for (Integer id : circles.get(circleId).getCircleMembers()) {
 				if (!answerCircles.get(circleId).getCircleMembers()
 						.contains(id))
-					FN++;
+					FN[id]++;
 			}
 		}
-		double Precision;
-		if (TP + FP == 0)
-			Precision = 1;
-		else
-			Precision = TP / (TP + FP);
-		double Recall;
-		if (TP + FN == 0)
-			Recall = 1;
-		else
-			Recall = TP / (TP + FN);
-		double F1;
-		if (Precision == 0 && Recall == 0)
-			F1 = 0;
-		else
-			F1 = (2 * Precision * Recall) / (Precision + Recall);
-		System.out.print("Precision : " + Precision);
-		System.out.print("\tRecall : " + Recall);
-		System.out.print("\tF1 : " + F1);
+		for(int i = 1;i < feat.size();i++){
+			double Precision;
+			if (TP[i] + FP[i] == 0)
+				Precision = 1;
+			else
+				Precision = TP[i] / (TP[i] + FP[i]);
+			double Recall;
+			if (TP[i] + FN[i] == 0)
+				Recall = 1;
+			else
+				Recall = TP[i] / (TP[i] + FN[i]);
+			if (Precision == 0 && Recall == 0)
+				F1[i] = 0;
+			else
+				F1[i] = (2 * Precision * Recall) / (Precision + Recall);
+		}
+		double f = 0;
+		for(int i = 1;i < feat.size();i++)
+			f += F1[i];
+		f /= (double) feat.size();
+		System.out.println("\tF1 : " + f);
 		ResultPair res = new ResultPair();
-		res.setF1(F1);
-		for (Integer circleId : answerCircles.keySet()) {
-			for (Integer id : answerCircles.get(circleId).getCircleMembers()) {
-				if (circles.get(circleId).getCircleMembers().contains(id))
-					TP++;
-				else
-					FP++;
-			}
-		}
-		double BER = 0;
-		for (Integer circleId : circles.keySet()) {
-			FN = 0;
-			FP = 0;
-			for (Integer id : circles.get(circleId).getCircleMembers()) {
-				if (!answerCircles.get(circleId).getCircleMembers()
-						.contains(id))
-					FN++;
-			}
-			for (Integer id : answerCircles.get(circleId).getCircleMembers()) {
-				if (!circles.get(circleId).getCircleMembers().contains(id))
-					FP++;
-			}
-			if (answerCircles.get(circleId).getCircleMembers().size() != 0
-					&& circles.get(circleId).getCircleMembers().size() != 0)
-				BER += 1 - (FN / circles.get(circleId).getCircleMembers().size() + FP
-						/ answerCircles.get(circleId).getCircleMembers().size()) * (0.5);
-			else if (answerCircles.get(circleId).getCircleMembers().size() != 0)
-				BER += 1 - (FP / answerCircles.get(circleId).getCircleMembers()
-						.size()) * (0.5);
-			else if (circles.get(circleId).getCircleMembers().size() != 0)
-				BER += 1 - (FN / circles.get(circleId).getCircleMembers().size()) * (0.5);
-		}
-		res.setBER(BER / circles.size());
-		System.out.println("      BER: " + BER / circles.size());
+		res.setF1(f);
+//		for (Integer circleId : answerCircles.keySet()) {
+//			for (Integer id : answerCircles.get(circleId).getCircleMembers()) {
+//				if (circles.get(circleId).getCircleMembers().contains(id))
+//					TP++;
+//				else
+//					FP++;
+//			}
+//		}
+//		double BER = 0;
+//		for (Integer circleId : circles.keySet()) {
+//			FN = 0;
+//			FP = 0;
+//			for (Integer id : circles.get(circleId).getCircleMembers()) {
+//				if (!answerCircles.get(circleId).getCircleMembers()
+//						.contains(id))
+//					FN++;
+//			}
+//			for (Integer id : answerCircles.get(circleId).getCircleMembers()) {
+//				if (!circles.get(circleId).getCircleMembers().contains(id))
+//					FP++;
+//			}
+//			if (answerCircles.get(circleId).getCircleMembers().size() != 0
+//					&& circles.get(circleId).getCircleMembers().size() != 0)
+//				BER += 1 - (FN / circles.get(circleId).getCircleMembers().size() + FP
+//						/ answerCircles.get(circleId).getCircleMembers().size()) * (0.5);
+//			else if (answerCircles.get(circleId).getCircleMembers().size() != 0)
+//				BER += 1 - (FP / answerCircles.get(circleId).getCircleMembers()
+//						.size()) * (0.5);
+//			else if (circles.get(circleId).getCircleMembers().size() != 0)
+//				BER += 1 - (FN / circles.get(circleId).getCircleMembers().size()) * (0.5);
+//		}
+//		res.setBER(BER / circles.size());
+//		System.out.println("      BER: " + BER / circles.size());
 		return res;
 	}
 }

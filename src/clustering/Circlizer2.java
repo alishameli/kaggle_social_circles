@@ -12,8 +12,8 @@ public class Circlizer2 {
 	/*
 	 * c = circle, v = vector, f = feature
 	 */
-	double alpha = 1, beta = 1, gamma = 1;
-	
+	double alpha = -1, beta = 1, gamma = 1;
+
 	double[][] externalDistance;
 	double[] circleDensity;
 
@@ -38,8 +38,7 @@ public class Circlizer2 {
 		this.v = centroid.getFeat().size();
 		// TODO: friendship state in vectors
 		this.f = centroid.getFeat().get(0).getSize();
-		
-		
+
 		// fillCVF();
 		fillValues();
 	}
@@ -52,10 +51,9 @@ public class Circlizer2 {
 		 * { bScore = score; best.clear(); for (Integer tmp : set) {
 		 * best.add(tmp); } } } return best;
 		 */
-		externalDistance=new double[c][c];
-		circleDensity=new double[c];
+		externalDistance = new double[c][c];
+		circleDensity = new double[c];
 
-		
 		double totalBestScore = 0;
 		LinkedHashSet<Integer> totalBestSet = new LinkedHashSet<Integer>();
 		totalBestSet.clear();
@@ -78,50 +76,62 @@ public class Circlizer2 {
 					mark[j] = false;
 					bestSet.remove(j);
 				}
-				bestSet.add(bestj);
-				mark[bestj] = true;
-
-				double score = computeScore(bestSet);
-				if (score > totalBestScore) {
-					totalBestScore = score;
-					totalBestSet.clear();
-					for (Integer tmp : bestSet)
-						totalBestSet.add(tmp);
-				}
-
 			}
+
+			bestSet.add(bestj);
+			mark[bestj] = true;
+
+			double total = v;
+			double covered = 0;
+			for (int l = 0; l < v; l++)
+				for (int j : bestSet) {
+					if (circles.get(j).arr.contains(Integer.valueOf(l))) {
+						covered += 1;
+						break;
+					}
+				}
+			double coverage = covered / total;
+
+			double score = computeScore(bestSet)+alpha*coverage;
+			if (score > totalBestScore) {
+				totalBestScore = score;
+				totalBestSet.clear();
+				for (Integer tmp : bestSet)
+					totalBestSet.add(tmp);
+			}
+
 		}
 		return totalBestSet;
 	}
 
-//	public LinkedHashSet<Integer> circlize(int p) {
-//
-//		// Set<Integer> bestSet = new LinkedHashSet<Integer>();
-//		boolean mark[] = new boolean[c];
-//		Set<Integer> bestSet = new LinkedHashSet<Integer>();
-//		bestSet.clear();
-//		int bestj = -1;
-//		double bestScore = 0;
-//		for (int i = 0; i < p; i++) {
-//			bestScore = 0;
-//			for (int j = 0; j < c; j++) {
-//				if (mark[j] == false) {
-//					bestSet.add(j);
-//					mark[j] = true;
-//					double score = computeScore(bestSet);
-//					if (score > bestScore) {
-//						bestj = j;
-//						bestScore = score;
-//					}
-//					mark[j] = false;
-//					bestSet.remove(j);
-//				}
-//				bestSet.add(bestj);
-//				mark[bestj] = true;
-//			}
-//		}
-//		return (LinkedHashSet<Integer>) bestSet;
-//	}
+	// public LinkedHashSet<Integer> circlize(int p) {
+	//
+	// // Set<Integer> bestSet = new LinkedHashSet<Integer>();
+	// boolean mark[] = new boolean[c];
+	// Set<Integer> bestSet = new LinkedHashSet<Integer>();
+	// bestSet.clear();
+	// int bestj = -1;
+	// double bestScore = 0;
+	// for (int i = 0; i < p; i++) {
+	// bestScore = 0;
+	// for (int j = 0; j < c; j++) {
+	// if (mark[j] == false) {
+	// bestSet.add(j);
+	// mark[j] = true;
+	// double score = computeScore(bestSet);
+	// if (score > bestScore) {
+	// bestj = j;
+	// bestScore = score;
+	// }
+	// mark[j] = false;
+	// bestSet.remove(j);
+	// }
+	// bestSet.add(bestj);
+	// mark[bestj] = true;
+	// }
+	// }
+	// return (LinkedHashSet<Integer>) bestSet;
+	// }
 
 	private void fillValues() {
 		featureCount = new double[f];
@@ -168,76 +178,66 @@ public class Circlizer2 {
 	 * @param set
 	 *            set of circle ids that we want to compute their score
 	 * @return score of this set
-	 */	private double computeScore(Set<Integer> set) {
-			double avgCircleDensity = 0;
-			double avgExternalDistance = 0;
-			double coverage = 0;
-			for (int i : set)
-				for (int j : set) {
-					if (i == j)
-						continue;
-					double dist = 0;
-					if (externalDistance[i][j] == 0) {
-						for (int k = 0; k < f; k++)
-							externalDistance[i][j] += Math.pow(circleVector[i][k]
-									- circleVector[j][k], 2);
-						externalDistance[i][j] = Math.sqrt(externalDistance[i][j]);
-					}
-					avgExternalDistance += externalDistance[i][j];
+	 */
+	private double computeScore(Set<Integer> set) {
+		double avgCircleDensity = 0;
+		double avgExternalDistance = 0;
+		for (int i : set)
+			for (int j : set) {
+				if (i == j)
+					continue;
+				double dist = 0;
+				if (externalDistance[i][j] == 0) {
+					for (int k = 0; k < f; k++)
+						externalDistance[i][j] += Math.pow(circleVector[i][k]
+								- circleVector[j][k], 2);
+					externalDistance[i][j] = Math.sqrt(externalDistance[i][j]);
 				}
-			if (set.size() > 1)
-				avgExternalDistance /= set.size() * (set.size() - 1);
-
-			for (int i : set) {
-				if (circleDensity[i] == 0) {
-					for (int j = 0; j < v; j++)
-						for (int k = 0; k < f; k++) {
-							double temp = 0;
-							if (circles.get(i).arr.contains(Integer.valueOf(j))) {
-								temp = centroid.getFeat().get(Integer.valueOf(j))
-										.getFeatures()[k];
-							}
-							circleDensity[i] += (temp * circleVector[i][k])
-									/ circles.get(i).arr.size();
-						}
-				}
-				avgCircleDensity += circleDensity[i];
+				avgExternalDistance += externalDistance[i][j];
 			}
-			avgCircleDensity /= set.size();
+		if (set.size() > 1)
+			avgExternalDistance /= set.size() * (set.size() - 1);
 
-			double total = v;
-			double covered = 0;
-			for (int i = 0; i < v; i++)
-				for (int j : set) {
-					if (circles.get(j).arr.contains(Integer.valueOf(i))) {
-						covered += 1;
-						break;
+		for (int i : set) {
+			if (circleDensity[i] == 0) {
+				for (int j = 0; j < v; j++)
+					for (int k = 0; k < f; k++) {
+						double temp = 0;
+						if (circles.get(i).arr.contains(Integer.valueOf(j))) {
+							temp = centroid.getFeat().get(Integer.valueOf(j))
+									.getFeatures()[k];
+						}
+						circleDensity[i] += (temp * circleVector[i][k])
+								/ circles.get(i).arr.size();
 					}
-				}
-			coverage = covered / total;// we can use
-			// coverage = Math.log1p(coverage);// Reduce the effect of coverage. Can
-			// be
-			// commented.
-			// coverage = Math.pow(coverage, 6);
-
-			// if (avgExternalDistance == 0)
-			// avgExternalDistance = 0.01;
-
-			return alpha * coverage + beta * avgCircleDensity + gamma
-					* avgExternalDistance;
-			// return coverage /* avgCircleDensity*/ / avgCircleCloseness;
+			}
+			avgCircleDensity += circleDensity[i];
 		}
+		avgCircleDensity /= set.size();
 
-		// private void fillCVF() {
-		// cvf = new double[c][v][f];
-		// for (int i = 0; i < c; i++) {
-		// for (int j = 0; j < v; j++) {
-		// if (circles.get(i).arr.contains(Integer.valueOf(j))) {
-		// double[] features = centroid.getFeat()
-		// .get(Integer.valueOf(j)).getFeatures();
-		// cvf[i][j] = features;
-		// }
-		// }
-		// }
-		// }
+		// we can use
+		// coverage = Math.log1p(coverage);// Reduce the effect of coverage. Can
+		// be
+		// commented.
+		// coverage = Math.pow(coverage, 6);
+
+		// if (avgExternalDistance == 0)
+		// avgExternalDistance = 0.01;
+
+		return beta * avgCircleDensity + gamma * avgExternalDistance;
+		// return coverage /* avgCircleDensity*/ / avgCircleCloseness;
 	}
+
+	// private void fillCVF() {
+	// cvf = new double[c][v][f];
+	// for (int i = 0; i < c; i++) {
+	// for (int j = 0; j < v; j++) {
+	// if (circles.get(i).arr.contains(Integer.valueOf(j))) {
+	// double[] features = centroid.getFeat()
+	// .get(Integer.valueOf(j)).getFeatures();
+	// cvf[i][j] = features;
+	// }
+	// }
+	// }
+	// }
+}

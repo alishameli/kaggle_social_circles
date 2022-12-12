@@ -55,8 +55,8 @@ public class NaiiveBayes6ForClusteringForAdd {
 			circles.put(circleId, c.getCircles().get(circleId));
 			answerCircles.put(circleId, new Circle());
 		}
-		fillEssentialDataStructures();
-		for (Integer queryId : feat.keySet()) {
+		fillEssentialDataStructures(); // nfk^2
+		for (Integer queryId : feat.keySet()) { // nfk^2
 			findQueryCircles(queryId);
 		}
 		computeResults();
@@ -64,8 +64,8 @@ public class NaiiveBayes6ForClusteringForAdd {
 	}
 
 	private void findQueryCircles(Integer queryId) {
-		removeFeatureVectorFromDataStructures(queryId);
-		for (Integer circleId : circles.keySet()) {
+		removeFeatureVectorFromDataStructures(queryId); 
+		for (Integer circleId : circles.keySet()) { 
 			if (circles.get(circleId).getCircleMembers().size() == 0)
 				continue;
 			boolean assigned = assignCircle(queryId, circleId);

@@ -62,8 +62,8 @@ public class Alish6 {
 
 		ArrayList<Integer> people = new ArrayList<Integer>();
 		for (int iterator = 1; iterator < Ids.length; iterator++) {
-			if (System.currentTimeMillis() - baseStartTime > 10000)
-				break;
+//			if (System.currentTimeMillis() - baseStartTime > 10000)
+//				break;
 
 			c.getCircles().clear();
 			for (int i = 0; i < c.getFeat().size(); i++)
@@ -114,8 +114,8 @@ public class Alish6 {
 					people.add(u);
 			}
 			output.add(container);
-			if (output.size() == 10)
-				break;
+//			if (output.size() == 10)
+//				break;
 		}
 		if (output.size() == 10)
 			System.out.println("YES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import clustering.Container;
 import dataStructures.Centroid;
+import dataStructures.DistanceType;
 
 public class DenseClusterFinder {
 	Centroid c;
@@ -25,33 +27,41 @@ public class DenseClusterFinder {
 		}
 	}
 
-	// private void rebuildGraph() {
-	// G = new Graph(remainedNodes);
-	// for (int i = 0; i < marked.length; i++) {
-	// if (!marked[i]) {
-	// for (Integer friend : c.getAdj().get(i + 1).getFriends()) {
-	// if (friend != 0 && !marked[friend - 1]) {
-	// G.AddEdge(i, friend - 1);
-	// }
-	// }
-	// }
-	// }
-	// }
-
 	private void rebuildGraph() {
 		G = new Graph(remainedNodes);
 		for (int i = 0; i < marked.length; i++) {
-			for (Integer friend : c.getAdj().get(i + 1).getFriends()) {
-				if (friend == 0)
-					continue;
-				if (marked[i] && marked[friend - 1])
-					continue;
-				G.AddEdge(i, friend - 1);
+			if (!marked[i]) {
+				for (Integer friend : c.getAdj().get(i + 1).getFriends()) {
+					if (friend != 0 && !marked[friend - 1]) {
+						G.AddEdge(i, friend - 1);
+					}
+				}
 			}
 		}
 	}
 
-	public void find() {
+//	private void rebuildGraph() throws Exception {
+//		G = new Graph(remainedNodes);
+//		for (int i = 0; i < marked.length; i++) {
+//			for (Integer friend : c.getAdj().get(i + 1).getFriends()) {
+//				if (friend == 0)
+//					continue;
+//				if (marked[i] && marked[friend - 1]){
+//					double tmp=c.getFeat().get(i).getDistanceFrom(c.getFeat().get(friend-1), DistanceType.COSINE);
+////					System.out.println(tmp+" * "+(tmp+1)/2);
+////					tmp=(tmp+1)/2;
+//					Random r=new Random();
+//					if(r.nextDouble()>tmp){
+////						System.out.println("removed!");
+//						continue;
+//					}
+//				}
+//				G.AddEdge(i, friend - 1);
+//			}
+//		}
+//	}
+
+	public void find() throws Exception {
 		rebuildGraph();
 		while (remainedNodes > 0) {
 			Goldberg gold = new Goldberg(G);
@@ -65,8 +75,8 @@ public class DenseClusterFinder {
 			if (sub.V == 0)
 				break;
 			output.add(cont);
-			 if (output.size() == 10)
-			 break;
+//			 if (output.size() == 10)
+//				 break;
 			rebuildGraph();
 		}
 		printToFile();

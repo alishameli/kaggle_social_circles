@@ -26,7 +26,7 @@ public class KCentroid {
 	private double featureFactor;
 	private double friendshipFactor;
 	private int dataSet;
-	
+
 	private Centroid centroid;
 	private CentroidBuilder builder;
 
@@ -85,28 +85,29 @@ public class KCentroid {
 	}
 
 	private void findFeatures() {
-		// int feature = 0;
-		// for (int i = 0; i < people.size(); i++) {
-		// String currentId = people.get(i);
-		// for (int j = 0; j < stringFeatures.get(currentId).size(); j++) {
-		// String newFeature = stringFeatures.get(currentId).get(j);
-		// if (!featNameToFeat.containsKey(newFeature))
-		// featNameToFeat.put(newFeature, feature++);
-		// }
-		// }
-		// numberOfFeatures = feature;
-		// for (int i = 0; i < people.size(); i++) {
-		// String currentId = people.get(i);
-		// Double[] temp = new Double[numberOfFeatures];
-		// for (int j = 0; j < numberOfFeatures; j++)
-		// temp[j] = 0.0;
-		// for (int j = 0; j < stringFeatures.get(currentId).size(); j++) {
-		// String newFeature = stringFeatures.get(currentId).get(j);
-		// temp[featNameToFeat.get(newFeature)] = featureFactor;
-		// }
-		// FeatureVector fv = new FeatureVector(temp);
-		// feat.put(mappedIDsRealToVirtual.get(currentId), fv);
-		// }
+//		int feature = 0;
+//		for (int i = 0; i < people.size(); i++) {
+//			String currentId = people.get(i);
+//			for (int j = 0; j < stringFeatures.get(currentId).size(); j++) {
+//				String newFeature = stringFeatures.get(currentId).get(j);
+//				if (!featNameToFeat.containsKey(newFeature))
+//					featNameToFeat.put(newFeature, feature++);
+//			}
+//		}
+//		numberOfFeatures = feature;
+//		for (int i = 0; i < people.size(); i++) {
+//			String currentId = people.get(i);
+//			Double[] temp = new Double[numberOfFeatures];
+//			for (int j = 0; j < numberOfFeatures; j++)
+//				temp[j] = 0.0;
+//			for (int j = 0; j < stringFeatures.get(currentId).size(); j++) {
+//				String newFeature = stringFeatures.get(currentId).get(j);
+//				temp[featNameToFeat.get(newFeature)] = featureFactor;
+//			}
+//			FeatureVector fv = new FeatureVector(temp);
+//			feat.put(mappedIDsRealToVirtual.get(currentId), fv);
+//		}
+
 		int feature = 0;
 		for (int i = 0; i < 1; i++) {
 			String currentId = people.get(i);

@@ -12,6 +12,10 @@ public class Friends {
 		return this.friends.contains(x);
 	}
 
+	public int get(int index){
+		return this.friends.get(index);
+	}
+	
 	public int getSize() {
 		return this.friends.size();
 	}

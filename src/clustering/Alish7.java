@@ -60,13 +60,13 @@ public class Alish7 {
 
 		for (int i = 1; i < Ids.length; i++)
 			keyset.add(c.getMappedIDsRealToVirtual().get(Ids[i]));
-		
-		mark=new boolean[c.getFeat().size()];
+
+		mark = new boolean[c.getFeat().size()];
 
 		ArrayList<Integer> people = new ArrayList<Integer>();
 		for (int iterator = 1; iterator < Ids.length; iterator++) {
-			//if (System.currentTimeMillis() - baseStartTime > 10000)
-			//	break;
+			// if (System.currentTimeMillis() - baseStartTime > 10000)
+			// break;
 
 			c.getCircles().clear();
 			for (int i = 0; i < c.getFeat().size(); i++)
@@ -116,10 +116,9 @@ public class Alish7 {
 				if (!people.contains(u))
 					people.add(u);
 			}
-			
-			
-			for(Integer tmp:container.arr)
-				mark[tmp]=true;
+
+			for (Integer tmp : container.arr)
+				mark[tmp] = true;
 			output.add(container);
 			if (output.size() == 10)
 				break;
@@ -169,7 +168,7 @@ public class Alish7 {
 		if (k == 0)
 			return;
 		for (Integer v : keyset) {
-			if(mark[v])
+			if (mark[v])
 				continue;
 			boolean isFriend = true, isDifferent = true;
 			for (int i = 0; i < stack.size(); i++) {

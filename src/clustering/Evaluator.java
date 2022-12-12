@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 public class Evaluator {
 
 	public enum EVALUATION_TYPE {
-		ZEROONE, SYMMETRICDIFF, FSCORE;
+		ZEROONE, SYMMETRICDIFF, FSCORE, PRECISION, RECALL;
 	}
 
 	// Compute the loss between a groundtruth cluster l and a predicted cluster
@@ -50,9 +50,12 @@ public class Evaluator {
 			return 1.0;
 		double precision = (1.0 * tp) / (double) lhat.size();
 		double recall = (1.0 * tp) / (double) l.size();
+		if(type == EVALUATION_TYPE.PRECISION)
+			return precision;
+		if(type == EVALUATION_TYPE.RECALL)
+			return recall;
 		if (type == EVALUATION_TYPE.FSCORE)
 			return 1 - 2 * (precision * recall) / (precision + recall);
-
 		return ll;
 	}
 
@@ -64,9 +67,14 @@ public class Evaluator {
 		double[][] matrix = new double[clusters.size()][chat.size()];
 
 		for (int i = 0; i < (int) clusters.size(); i++)
-			for (int j = 0; j < (int) chat.size(); j++)
+			for (int j = 0; j < (int) chat.size(); j++){
+				if(type == EVALUATION_TYPE.PRECISION || type == EVALUATION_TYPE.RECALL)
 				matrix[i][j] = loss((Container) clusters.toArray()[i],
-						(Container) chat.toArray()[j], N, type);
+						(Container) chat.toArray()[j], N, EVALUATION_TYPE.FSCORE);
+				else
+					matrix[i][j] = loss((Container) clusters.toArray()[i],
+							(Container) chat.toArray()[j], N, type);
+			}
 
 		Munkres m = new Munkres(matrix);
 		int[] res = m.execute();

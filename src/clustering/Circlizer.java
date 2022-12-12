@@ -1,9 +1,15 @@
 package clustering;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import clustering.Evaluator.EVALUATION_TYPE;
 
 import dataStructures.Centroid;
 
@@ -21,9 +27,9 @@ public class Circlizer {
 	ArrayList<Container> circles;
 
 	double bestScore = 0;
-
+	
 	public LinkedHashSet<Integer> Circlize(ArrayList<Container> circles,
-			Centroid centroid) {
+			Centroid centroid) throws IOException {
 		this.centroid = centroid;
 		this.circles = circles;
 
@@ -41,19 +47,21 @@ public class Circlizer {
 			circlesSet.add(i);
 		}
 		Set<Integer> bestSet = new LinkedHashSet<Integer>();
+
 		Set<Set<Integer>> powerset = powerSet(circlesSet);
 		for (Set<Integer> set : powerset) {
-			if (set.size() > 2)
-				continue;
+			// if (set.size() > 2)
+			// continue;
 			if (!set.isEmpty()) {
 				double score = computeScore(set);
-		//		System.out.println(score);
 				if (score >= bestScore) {
 					bestScore = score;
 					bestSet = set;
 				}
 			}
 		}
+
+
 		return (LinkedHashSet<Integer>) bestSet;
 	}
 
@@ -135,14 +143,14 @@ public class Circlizer {
 				}
 			}
 		coverage = covered / total;// we can use
-//		coverage = Math.log1p(coverage);// Reduce the effect of coverage. Can
+		// coverage = Math.log1p(coverage);// Reduce the effect of coverage. Can
 		// be
 		// commented.
 		coverage = Math.pow(coverage, 6);
 
 		if (avgCircleCloseness == 0)
 			avgCircleCloseness = 0.01;
-		return coverage /* avgCircleDensity*/ / avgCircleCloseness;
+		return coverage /* avgCircleDensity *// avgCircleCloseness;
 	}
 
 	private void fillCVF() {
@@ -177,4 +185,7 @@ public class Circlizer {
 		}
 		return sets;
 	}
+
+	// added for evaluate
+
 }
